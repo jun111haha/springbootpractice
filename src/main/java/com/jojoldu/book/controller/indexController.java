@@ -1,22 +1,32 @@
 package com.jojoldu.book.controller;
 
+import com.jojoldu.book.config.auth.LoginUser;
+import com.jojoldu.book.config.auth.dto.SessionUser;
 import com.jojoldu.book.dto.PostsResponseDto;
 import com.jojoldu.book.service.PostsService;
 import lombok.RequiredArgsConstructor;
+import org.h2.engine.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import javax.servlet.http.HttpSession;
 
 @RequiredArgsConstructor
 @Controller
 public class indexController {
 
     private final PostsService postsService;
+    private final HttpSession httpSession;
 
     @GetMapping("/")
-    public String index(Model model){
+    public String index(Model model, @LoginUser SessionUser user){
         model.addAttribute("posts", postsService.findAllDesc());
+
+        if(user != null){
+            model.addAttribute("userName", user.getName());
+        }
 
         return "index";
     }
